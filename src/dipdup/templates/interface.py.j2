@@ -1,0 +1,18 @@
+{%- for import in data.imports %}
+from {{ import.module }} import {{ import.class_name }}
+{%- endfor %}
+
+
+{{ data.interface.definition }}
+{%- for entrypoint in data.interface.methods %}
+
+{%- if entrypoint.decorators %}
+{%- for decorator in entrypoint.decorators %}
+    @{{ decorator }}
+{%- endfor %}
+{%- endif %}
+    {{ entrypoint.definition }}
+{%- for line in entrypoint.code %}
+        {{ line }}
+{%- endfor %}
+{% endfor %}

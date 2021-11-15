@@ -1,0 +1,13 @@
+class CodegenPath:
+    INIT_FILE: str = '__init__.py'
+    KEEP_FILE: str = '.keep'
+    INTERFACE_TEMPLATE_FILE: str = 'interface.py'
+    DOCKER_DIR: str = 'docker'
+    GRAPHQL_DIR: str = 'graphql'
+    HANDLERS_DIR: str = 'handlers'
+    INTERFACES_DIR: str = 'interfaces'
+    MODELS_DIR: str = 'models'
+    SCHEMAS_DIR: str = 'schemas'
+    SQL_DIR: str = 'sql'
+    TYPES_DIR: str = 'types'
+    PARAMETER_DIR: str = 'parameter'
