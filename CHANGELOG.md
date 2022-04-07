@@ -1,5 +1,11 @@
 # Changelog
 
+## [unreleased]
+
+### Added
+
+* context: Added `pool_apply` and `pool_map` methods to execute blocking functions in `multiprocess` pools.
+
 ## 5.0.0-rc4 - 2022-04-04
 
 ### Added
