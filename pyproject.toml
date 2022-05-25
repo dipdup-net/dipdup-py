@@ -43,7 +43,7 @@ sqlparse = "^0.4.2"
 tabulate = "^0.8.9"
 tortoise-orm = "0.19.1"
 typing-inspect = "^0.6.0"
-pywin32 = {version = "^227", python = ">=3.10,<3.11", markers = "sys_platform == 'win32'", optional = true}
+pywin32 = {version = "^227", platform = "win32"}
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
