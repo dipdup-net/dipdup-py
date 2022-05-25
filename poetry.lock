@@ -2460,11 +2460,12 @@ multidict = ">=4.0"
 
 [extras]
 pytezos = ["pytezos"]
+win32 = ["pywin32"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "1a9726e561abe59171bc77c96dfa6cab3e4bb6513c2f52c3f87d34ae9c9d682e"
+content-hash = "ffa3f7d6136f5d615c9234e32373bf6fa8eb3e280221dc7bd60e2b11e25903b9"
 
 [metadata.files]
 aiohttp = [

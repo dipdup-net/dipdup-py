@@ -43,7 +43,7 @@ sqlparse = "^0.4.2"
 tabulate = "^0.8.9"
 tortoise-orm = "0.19.1"
 typing-inspect = "^0.6.0"
-pywin32 = {version = "*", platform = "win32"}
+pywin32 = {version = "^227", optional = true}
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
@@ -70,6 +70,7 @@ pytest-asyncio = "^0.18.3"
 
 [tool.poetry.extras]
 pytezos = ["pytezos"]
+win32 = ["pywin32"]
 
 [tool.poetry.scripts]
 dipdup = 'dipdup.cli:cli'
