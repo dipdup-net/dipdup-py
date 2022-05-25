@@ -1718,7 +1718,6 @@ cached-property = "^1.5.2"
 cattrs = "^22.1.0"
 click = "^8.0.3,<=8.0.4"
 deprecation = "^2.1.0"
-docker = {git = "https://github.com/docker/docker-py.git", branch = "master"}
 fastecdsa = "^2.2.3"
 ipykernel = "^6.6.0"
 jsonschema = "^4.3.2"
@@ -1747,7 +1746,7 @@ typing-extensions = "^4.0.1"
 type = "git"
 url = "git@github.com:baking-bad/pytezos.git"
 reference = "aux/bump-and-dipdup"
-resolved_reference = "40e846e006a2cafdba9734fbf62f8a21e9cbb194"
+resolved_reference = "195642ac5f6028123e6c5fe93bf1f1adadb50d72"
 
 [[package]]
 name = "python-dateutil"
@@ -2467,12 +2466,11 @@ multidict = ">=4.0"
 
 [extras]
 pytezos = ["pytezos"]
-win32 = []
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "26d8e262dadaffc384e8f7aa7bd292eaa7fa09fe1c24e06c7823fe1b00927006"
+content-hash = "96e667dfdd97f245c1b9a306b34f0c7014d568d784713719a62dcd77bd46da80"
 
 [metadata.files]
 aiohttp = [

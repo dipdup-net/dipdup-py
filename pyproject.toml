@@ -29,6 +29,7 @@ APScheduler = "^3.8.0"
 asyncclick = "^8.0.1"
 asyncpg = "^0.24.0"
 datamodel-code-generator = "^0.11.18"
+docker = {git = "https://github.com/docker/docker-py.git"}
 fcache = "^0.4.7"
 orjson = "^3.6.6"
 prometheus-client = "^0.12.0"
@@ -69,7 +70,6 @@ pytest-asyncio = "^0.18.3"
 
 [tool.poetry.extras]
 pytezos = ["pytezos"]
-win32 = ["pywin32"]
 
 [tool.poetry.scripts]
 dipdup = 'dipdup.cli:cli'
