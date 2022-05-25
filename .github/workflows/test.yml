@@ -9,8 +9,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
+            arch: amd64
           - os: macos-latest
+            arch: amd64
           - os: windows-latest
+            arch: amd64
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
