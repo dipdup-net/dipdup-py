@@ -10,6 +10,7 @@ jobs:
         include:
           - os: ubuntu-latest
           - os: macos-latest
+          - os: windows-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
