@@ -1,11 +1,8 @@
 import subprocess
 from contextlib import contextmanager
-from contextlib import suppress
 from decimal import Decimal
-from os import mkdir
 from os.path import dirname
 from os.path import join
-from shutil import rmtree
 from tempfile import TemporaryDirectory
 from typing import Generator
 
