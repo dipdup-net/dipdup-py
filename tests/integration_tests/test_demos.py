@@ -40,7 +40,7 @@ def run_dipdup(config: str) -> Generator[str, None, None]:
 class TestDemos:
     async def test_hic_et_nunc(self) -> None:
         with run_dipdup('hic_et_nunc.yml') as tmp_dir:
-            async with tortoise_wrapper(f'sqlite://{tmp_dir}/db.sqlite3', 'demo_hic_et_nunc.models'):
+            async with tortoise_wrapper('sqlite://' + join(tmp_dir, 'db.sqlite3'), 'demo_hic_et_nunc.models'):
                 holders = await demo_hic_et_nunc.models.Holder.filter().count()
                 tokens = await demo_hic_et_nunc.models.Token.filter().count()
                 swaps = await demo_hic_et_nunc.models.Swap.filter().count()
@@ -53,7 +53,7 @@ class TestDemos:
 
     async def test_quipuswap(self) -> None:
         with run_dipdup('quipuswap.yml') as tmp_dir:
-            async with tortoise_wrapper(f'sqlite://{tmp_dir}/db.sqlite3', 'demo_quipuswap.models'):
+            async with tortoise_wrapper('sqlite://' + join(tmp_dir, 'db.sqlite3'), 'demo_quipuswap.models'):
                 trades = await demo_quipuswap.models.Trade.filter().count()
                 positions = await demo_quipuswap.models.Position.filter().count()
                 async with in_transaction() as conn:
@@ -64,7 +64,7 @@ class TestDemos:
 
     async def test_tzcolors(self) -> None:
         with run_dipdup('tzcolors.yml') as tmp_dir:
-            async with tortoise_wrapper(f'sqlite://{tmp_dir}/db.sqlite3', 'demo_tzcolors.models'):
+            async with tortoise_wrapper('sqlite://' + join(tmp_dir, 'db.sqlite3'), 'demo_tzcolors.models'):
                 addresses = await demo_tzcolors.models.Address.filter().count()
                 tokens = await demo_tzcolors.models.Token.filter().count()
                 auctions = await demo_tzcolors.models.Auction.filter().count()
@@ -77,7 +77,7 @@ class TestDemos:
 
     async def test_tezos_domains(self) -> None:
         with run_dipdup('tezos_domains.yml') as tmp_dir:
-            async with tortoise_wrapper(f'sqlite://{tmp_dir}/db.sqlite3', 'demo_tezos_domains.models'):
+            async with tortoise_wrapper('sqlite://' + join(tmp_dir, 'db.sqlite3'), 'demo_tezos_domains.models'):
                 tlds = await demo_tezos_domains.models.TLD.filter().count()
                 domains = await demo_tezos_domains.models.Domain.filter().count()
 
@@ -86,7 +86,7 @@ class TestDemos:
 
     async def test_tezos_domains_big_map(self) -> None:
         with run_dipdup('tezos_domains_big_map.yml') as tmp_dir:
-            async with tortoise_wrapper(f'sqlite://{tmp_dir}/db.sqlite3', 'demo_tezos_domains_big_map.models'):
+            async with tortoise_wrapper('sqlite://' + join(tmp_dir, 'db.sqlite3'), 'demo_tezos_domains_big_map.models'):
                 tlds = await demo_tezos_domains_big_map.models.TLD.filter().count()
                 domains = await demo_tezos_domains_big_map.models.Domain.filter().count()
 
@@ -95,7 +95,7 @@ class TestDemos:
 
     async def test_tzbtc(self) -> None:
         with run_dipdup('tzbtc.yml') as tmp_dir:
-            async with tortoise_wrapper(f'sqlite://{tmp_dir}/db.sqlite3', 'demo_tzbtc.models'):
+            async with tortoise_wrapper('sqlite://' + join(tmp_dir, 'db.sqlite3'), 'demo_tzbtc.models'):
                 holders = await demo_tzbtc.models.Holder.filter().count()
                 random_balance = (await demo_tzbtc.models.Holder.first()).balance  # type: ignore
 
@@ -113,7 +113,7 @@ class TestDemos:
     )
     async def test_tzbtc_transfers(self, config_file, expected_holders, expected_balance) -> None:
         with run_dipdup(config_file) as tmp_dir:
-            async with tortoise_wrapper(f'sqlite://{tmp_dir}/db.sqlite3', 'demo_tzbtc_transfers.models'):
+            async with tortoise_wrapper('sqlite://' + join(tmp_dir, 'db.sqlite3'), 'demo_tzbtc_transfers.models'):
                 holders = await demo_tzbtc_transfers.models.Holder.filter().count()
                 random_balance = (await demo_tzbtc_transfers.models.Holder.first()).balance  # type: ignore
 
