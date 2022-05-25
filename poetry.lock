@@ -2465,7 +2465,7 @@ win32 = ["pywin32"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "ffa3f7d6136f5d615c9234e32373bf6fa8eb3e280221dc7bd60e2b11e25903b9"
+content-hash = "9eb95147d05671ae09727d7a286a544e040e70fefb6cbdacc3fd376cc4453725"
 
 [metadata.files]
 aiohttp = [
