@@ -398,11 +398,11 @@ unicode_backport = ["unicodedata2"]
 
 [[package]]
 name = "click"
-version = "8.1.3"
+version = "8.0.4"
 description = "Composable command line interface toolkit"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.6"
 
 [package.dependencies]
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
@@ -536,11 +536,12 @@ wmi = ["wmi (>=1.5.1,<2.0.0)"]
 
 [[package]]
 name = "docker"
-version = "5.0.3"
+version = "5.1.0.dev0"
 description = "A Python library for the Docker Engine API."
 category = "main"
 optional = false
 python-versions = ">=3.6"
+develop = false
 
 [package.dependencies]
 pywin32 = {version = "227", markers = "sys_platform == \"win32\""}
@@ -548,8 +549,14 @@ requests = ">=2.14.2,<2.18.0 || >2.18.0"
 websocket-client = ">=0.32.0"
 
 [package.extras]
-ssh = ["paramiko (>=2.4.2)"]
+ssh = ["paramiko (>=2.4.3)"]
 tls = ["pyOpenSSL (>=17.5.0)", "cryptography (>=3.4.7)", "idna (>=2.0.0)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/docker/docker-py.git"
+reference = "master"
+resolved_reference = "a48a5a9647761406d66e8271f19fab7fa0c5f582"
 
 [[package]]
 name = "docutils"
@@ -1696,7 +1703,7 @@ testing = ["filelock"]
 
 [[package]]
 name = "pytezos"
-version = "3.4.2"
+version = "3.5.1"
 description = "Python toolkit for Tezos"
 category = "main"
 optional = true
@@ -1709,9 +1716,9 @@ base58 = "^2.1.1"
 bson = "^0.5.10"
 cached-property = "^1.5.2"
 cattrs = "^22.1.0"
-click = "^8.0.3"
+click = "^8.0.3,<=8.0.4"
 deprecation = "^2.1.0"
-docker = {version = "^5.0.3", markers = "sys_platform == \"linux\""}
+docker = {git = "https://github.com/docker/docker-py.git", branch = "master"}
 fastecdsa = "^2.2.3"
 ipykernel = "^6.6.0"
 jsonschema = "^4.3.2"
@@ -1740,7 +1747,7 @@ typing-extensions = "^4.0.1"
 type = "git"
 url = "git@github.com:baking-bad/pytezos.git"
 reference = "aux/bump-and-dipdup"
-resolved_reference = "d27b382023a823e483aaa236a7cc26cf1d95384f"
+resolved_reference = "40e846e006a2cafdba9734fbf62f8a21e9cbb194"
 
 [[package]]
 name = "python-dateutil"
@@ -2768,8 +2775,8 @@ charset-normalizer = [
     {file = "charset_normalizer-2.0.12-py3-none-any.whl", hash = "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"},
 ]
 click = [
-    {file = "click-8.1.3-py3-none-any.whl", hash = "sha256:bb4d8133cb15a609f44e8213d9b391b0809795062913b383c62be0ee95b1db48"},
-    {file = "click-8.1.3.tar.gz", hash = "sha256:7682dc8afb30297001674575ea00d1814d808d6a36af415a82bd481d37ba7b8e"},
+    {file = "click-8.0.4-py3-none-any.whl", hash = "sha256:6a7a62563bbfabfda3a38f3023a1db4a35978c0abd76f6c9605ecd6554d6d9b1"},
+    {file = "click-8.0.4.tar.gz", hash = "sha256:8458d7b1287c5fb128c90e23381cf99dcde74beaf6c7ff6384ce84d6fe090adb"},
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
@@ -2865,10 +2872,7 @@ dnspython = [
     {file = "dnspython-2.2.1-py3-none-any.whl", hash = "sha256:a851e51367fb93e9e1361732c1d60dab63eff98712e503ea7d92e6eccb109b4f"},
     {file = "dnspython-2.2.1.tar.gz", hash = "sha256:0f7569a4a6ff151958b64304071d370daa3243d15941a7beedf0c9fe5105603e"},
 ]
-docker = [
-    {file = "docker-5.0.3-py2.py3-none-any.whl", hash = "sha256:7a79bb439e3df59d0a72621775d600bc8bc8b422d285824cb37103eab91d1ce0"},
-    {file = "docker-5.0.3.tar.gz", hash = "sha256:d916a26b62970e7c2f554110ed6af04c7ccff8e9f81ad17d0d40c75637e227fb"},
-]
+docker = []
 docutils = [
     {file = "docutils-0.17.1-py2.py3-none-any.whl", hash = "sha256:cf316c8370a737a022b72b56874f6602acf974a37a9fba42ec2876387549fc61"},
     {file = "docutils-0.17.1.tar.gz", hash = "sha256:686577d2e4c32380bb50cbb22f575ed742d58168cee37e99117a854bcd88f125"},
