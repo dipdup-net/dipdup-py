@@ -16,6 +16,9 @@ all:            ## Run a whole CI pipeline (default)
 	make install lint test cover
 
 install:        ## Install project
+	export AIOHTTP_NO_EXTENSIONS=1
+	export FROZENLIST_NO_EXTENSIONS=1
+	export YARL_NO_EXTENSIONS=1
 	poetry install \
 	`if [ -n "${EXTRAS}" ]; then for i in ${EXTRAS}; do echo "-E $$i "; done; fi` \
 	`if [ "${DEV}" = "0" ]; then echo "--no-dev"; fi`
