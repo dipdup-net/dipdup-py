@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import sys
@@ -17,6 +18,9 @@ spec_reindex_mapping = {
     '1.1': True,
     '1.2': True,
 }
+
+if sys.platform == 'windows':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 sys.path.append(os.getcwd())
 logging.captureWarnings(True)

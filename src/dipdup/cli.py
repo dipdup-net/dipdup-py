@@ -83,8 +83,9 @@ async def _shutdown() -> None:
 def cli_wrapper(fn):
     @wraps(fn)
     async def wrapper(*args, **kwargs) -> None:
-        loop = asyncio.get_running_loop()
-        loop.add_signal_handler(signal.SIGINT, lambda: asyncio.ensure_future(_shutdown()))
+        if sys.platform != 'win32':
+            loop = asyncio.get_running_loop()
+            loop.add_signal_handler(signal.SIGINT, lambda: asyncio.ensure_future(_shutdown()))
         try:
             await fn(*args, **kwargs)
         except (KeyboardInterrupt, asyncio.CancelledError):
