@@ -16,6 +16,9 @@ all:            ## Run a whole CI pipeline (default)
 	make install lint test cover
 
 install:        ## Install project
+	export AIOHTTP_NO_EXTENSIONS=1
+	export FROZENLIST_NO_EXTENSIONS=1
+	export YARL_NO_EXTENSIONS=1
 	poetry install \
 	`if [ -n "${EXTRAS}" ]; then for i in ${EXTRAS}; do echo "-E $$i "; done; fi` \
 	`if [ "${DEV}" = "0" ]; then echo "--no-dev"; fi`
@@ -46,8 +49,8 @@ build:          ## Build wheel Python package
 	poetry build
 
 image:          ## Build Docker image
-	docker buildx build . -t dipdup:${TAG}
-	docker buildx build . -t dipdup:${TAG}-pytezos --build-arg EXTRAS=pytezos
+	docker buildx build . --progress plain -t dipdup:${TAG}
+	# docker buildx build . --progress plain -t dipdup:${TAG}-pytezos --build-arg EXTRAS=pytezos
 
 release-patch:  ## Release patch version
 	bumpversion patch
