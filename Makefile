@@ -22,6 +22,7 @@ install:        ## Install project
 	poetry install \
 	`if [ -n "${EXTRAS}" ]; then for i in ${EXTRAS}; do echo "-E $$i "; done; fi` \
 	`if [ "${DEV}" = "0" ]; then echo "--no-dev"; fi`
+	poetry run pip uninstall -y flakehell || true
 
 lint:           ## Lint with all tools
 	make isort black flake mypy
@@ -33,7 +34,7 @@ black:          ## Lint with black
 	poetry run black src tests
 
 flake:          ## Lint with flake8
-	poetry run flakehell lint src tests
+	poetry run flakeheaven lint src tests
 
 mypy:           ## Lint with mypy
 	poetry run mypy src tests
@@ -42,14 +43,14 @@ test:           ## Run test suite
 	poetry run pytest --cov-report=term-missing --cov=dipdup --cov-report=xml -n auto --dist loadscope -s -v tests
 
 cover:          ## Print coverage for the current branch
-	poetry run diff-cover coverage.xml
+	poetry run diff-cover --compare-branch `git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'` coverage.xml
 
 build:          ## Build wheel Python package
 	poetry build
 
 image:          ## Build Docker image
-	docker build . -t dipdup:${TAG}
-	docker build . -t dipdup:${TAG}-pytezos --build-arg EXTRAS=pytezos
+	docker buildx build . --progress plain -t dipdup:${TAG}
+	# docker buildx build . --progress plain -t dipdup:${TAG}-pytezos --build-arg EXTRAS=pytezos
 
 release-patch:  ## Release patch version
 	bumpversion patch

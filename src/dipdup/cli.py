@@ -186,7 +186,7 @@ async def cli(ctx, config: List[str], env_file: List[str], logging_config: str):
     try:
         await DipDupCodeGenerator(_config, {}).create_package()
     except Exception as e:
-        raise InitializationRequiredError from e
+        raise InitializationRequiredError('Failed to create a project package.') from e
 
     # NOTE: Ensure that `spec_version` is valid and supported
     if _config.spec_version not in spec_version_mapping:
@@ -432,7 +432,7 @@ async def schema_init(ctx):
 
     async with AsyncExitStack() as stack:
         await dipdup._set_up_database(stack)
-        await dipdup._set_up_hooks()
+        await dipdup._set_up_hooks(set())
         await dipdup._create_datasources()
         await dipdup._initialize_schema()
 
