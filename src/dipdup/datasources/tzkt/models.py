@@ -141,6 +141,10 @@ def _apply_bigmap_diffs(
 
 def _process_storage(storage: Any, storage_type: T, bigmap_diffs: Dict[int, Iterable[Dict[str, Any]]]) -> Any:
     """Replace bigmap pointers with actual data from diffs"""
+    # FIXME: mypyc hack
+    if storage_type == bool:
+        return storage
+
     # Check if Union or Optional (== Union[Any, NoneType])
     is_union, arg_types = unwrap_union_type(storage_type)
     if is_union:
