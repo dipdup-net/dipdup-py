@@ -1,4 +1,3 @@
-import typing
 from contextlib import suppress
 from functools import lru_cache
 from itertools import groupby
@@ -12,7 +11,6 @@ from typing import Tuple
 from typing import Type
 from typing import TypeVar
 from typing import Union
-from typing import cast
 
 from pydantic import BaseModel
 from pydantic import Extra
@@ -33,8 +31,7 @@ def extract_root_outer_type(storage_type: Type[BaseModel]) -> T:
     """Extract Pydantic __root__ type"""
     root_field = storage_type.__fields__['__root__']
     if root_field.allow_none:
-        # NOTE: Optional is a magic _SpecialForm
-        return cast(Type[BaseModel], typing.Optional[root_field.type_])
+        return root_field.type_ | None
     else:
         return root_field.outer_type_
 
@@ -88,7 +85,7 @@ def get_dict_value_type(dict_type: Type[Any], key: Optional[str] = None) -> Type
         if key in (field.name, field.alias):
             # NOTE: Pydantic does not preserve outer_type_ for Optional
             if field.allow_none:
-                return cast(Type[Any], typing.Optional[field.type_])
+                return field.type_ | None
             else:
                 return field.outer_type_
 

@@ -37,6 +37,13 @@ homepage:       ## Build homepage
 	cd docs
 	make homepage
 
+mypyc:
+	make clean
+	cd src
+	mypyc dipdup/datasources/tzkt/models.py
+	cd ..
+	poetry run python -m pytest tests/test_dipdup/test_models.py
+
 ##
 
 isort:          ## Format with isort
