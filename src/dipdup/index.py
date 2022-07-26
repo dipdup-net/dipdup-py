@@ -550,7 +550,7 @@ class OperationIndex(Index):
         """Get addresses to fetch transactions from during initial synchronization"""
         if OperationType.transaction not in self._config.types:
             return set()
-        return {contract.address for contract in self._config.contracts if isinstance(contract, ContractConfig)}
+        return {contract.address for contract in self._config.contracts if isinstance(contract, ContractConfig) and not contract.group_by_code}
 
     async def _get_origination_addresses(self) -> Set[str]:
         """Get addresses to fetch origination from during initial synchronization"""
@@ -563,7 +563,7 @@ class OperationIndex(Index):
                 if not isinstance(pattern_config, OperationHandlerOriginationPatternConfig):
                     continue
 
-                if pattern_config.originated_contract:
+                if pattern_config.originated_contract and not pattern_config.originated_contract_config.group_by_code:
                     addresses.add(pattern_config.originated_contract_config.address)
 
                 if pattern_config.source:

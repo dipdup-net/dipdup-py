@@ -208,10 +208,12 @@ class ContractConfig(NameMixin):
 
     :param address: Contract address
     :param typename: User-defined alias for the contract script
+    :param group_by_code: Whether to group contracts by code
     """
 
     address: str
     typename: Optional[str] = None
+    group_by_code: bool = False
 
     def __hash__(self) -> int:
         return hash(f'{self.address}{self.typename or ""}')

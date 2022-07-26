@@ -49,5 +49,8 @@ class OperationFetcherRequest(Enum):
     """Represents multiple TzKT calls to be merged into a single batch of operations"""
 
     sender_transactions = 'sender_transactions'
+    sender_hash_transactions = 'sender_hash_transactions'
     target_transactions = 'target_transactions'
+    target_hash_transactions = 'target_hash_transactions'
     originations = 'originations'
+    hash_originations = 'hash_originations'

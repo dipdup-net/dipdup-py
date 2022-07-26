@@ -80,14 +80,18 @@ class OperationFetcher:
         first_level: int,
         last_level: int,
         transaction_addresses: Set[str],
+        transaction_code_hashes: Set[int],
         origination_addresses: Set[str],
+        origination_code_hashes: Set[int],
         migration_originations: Tuple[OperationData, ...] = None,
     ) -> None:
         self._datasource = datasource
         self._first_level = first_level
         self._last_level = last_level
         self._transaction_addresses = transaction_addresses
+        self._transaction_code_hashes = transaction_code_hashes
         self._origination_addresses = origination_addresses
+        self._origination_code_hashes = origination_code_hashes
 
         self._logger = logging.getLogger('dipdup.tzkt')
         self._head: int = 0
@@ -106,20 +110,29 @@ class OperationFetcher:
                 return operations[i].level
         return operations[0].level
 
-    async def _fetch_originations(self) -> None:
+    async def _fetch_originations(self, by_hash: bool) -> None:
         """Fetch a single batch of originations, bump channel offset"""
-        key = OperationFetcherRequest.originations
-        if not self._origination_addresses:
+        filters: Set[str] | Set[int]
+        if by_hash:
+            key = OperationFetcherRequest.originations
+            filters = self._origination_addresses
+            params: Dict[str, Any] = {'addresses': filters}
+        else:
+            key = OperationFetcherRequest.hash_originations
+            filters = self._origination_code_hashes
+            params = {'code_hashes': filters}
+
+        if not filters:
             self._fetched[key] = True
             self._heads[key] = self._last_level
         if self._fetched[key]:
             return
 
-        self._logger.debug('Fetching originations of %s', self._origination_addresses)
+        self._logger.debug('Fetching originations of %s', filters)
 
         # FIXME: No pagination because of URL length limit workaround
         originations = await self._datasource.get_originations(
-            addresses=self._origination_addresses,
+            **params,
             first_level=self._first_level,
             last_level=self._last_level,
         )
@@ -132,20 +145,29 @@ class OperationFetcher:
         self._fetched[key] = True
         self._heads[key] = self._last_level
 
-    async def _fetch_transactions(self, field: str) -> None:
+    async def _fetch_transactions(self, by_hash: bool, field: str) -> None:
         """Fetch a single batch of transactions, bump channel offset"""
-        key = getattr(OperationFetcherRequest, field + '_transactions')
-        if not self._transaction_addresses:
+        filters: Set[str] | Set[int]
+        if by_hash:
+            key = getattr(OperationFetcherRequest, 'hash_' + field + '_transactions')
+            filters = self._transaction_addresses
+            params: Dict[str, Any] = {'addresses': filters}
+        else:
+            key = getattr(OperationFetcherRequest, field + '_transactions')
+            filters = self._transaction_code_hashes
+            params = {'code_hashes': filters}
+
+        if not filters:
             self._fetched[key] = True
             self._heads[key] = self._last_level
         if self._fetched[key]:
             return
 
-        self._logger.debug('Fetching %s transactions of %s', field, self._transaction_addresses)
+        self._logger.debug('Fetching %s transactions of %s', field, filters)
 
         transactions = await self._datasource.get_transactions(
+            **params,
             field=field,
-            addresses=self._transaction_addresses,
             offset=self._offsets[key],
             first_level=self._first_level,
             last_level=self._last_level,
@@ -171,8 +193,11 @@ class OperationFetcher:
         """
         for type_ in (
             OperationFetcherRequest.sender_transactions,
+            OperationFetcherRequest.sender_hash_transactions,
             OperationFetcherRequest.target_transactions,
+            OperationFetcherRequest.target_hash_transactions,
             OperationFetcherRequest.originations,
+            OperationFetcherRequest.hash_originations,
         ):
             self._heads[type_] = 0
             self._offsets[type_] = 0
@@ -180,14 +205,19 @@ class OperationFetcher:
 
         while True:
             min_head = sorted(self._heads.items(), key=lambda x: x[1])[0][0]
-            if min_head == OperationFetcherRequest.originations:
-                await self._fetch_originations()
-            elif min_head == OperationFetcherRequest.target_transactions:
-                await self._fetch_transactions('target')
-            elif min_head == OperationFetcherRequest.sender_transactions:
-                await self._fetch_transactions('sender')
-            else:
-                raise RuntimeError
+            match min_head:
+                case OperationFetcherRequest.originations:
+                    await self._fetch_originations(False)
+                case OperationFetcherRequest.hash_originations:
+                    await self._fetch_originations(True)
+                case OperationFetcherRequest.target_transactions:
+                    await self._fetch_transactions(False, 'target')
+                case OperationFetcherRequest.target_hash_transactions:
+                    await self._fetch_transactions(True, 'target')
+                case OperationFetcherRequest.sender_transactions:
+                    await self._fetch_transactions(False, 'sender')
+                case OperationFetcherRequest.sender_hash_transactions:
+                    await self._fetch_transactions(True, 'sender')
 
             head = min(self._heads.values())
             while self._head <= head:
@@ -590,19 +620,25 @@ class TzktDatasource(IndexDatasource):
     async def get_originations(
         self,
         addresses: Set[str],
+        code_hashes: Set[int],
         first_level: int,
         last_level: int,
     ) -> Tuple[OperationData, ...]:
+        if int(bool(addresses)) + int(bool(code_hashes)) != 1:
+            raise ValueError('Either `addresses` or `code_hashes` must be specified')
+
+        field = 'codeHash' if code_hashes else 'originatedContract'
+
         raw_originations = []
         # NOTE: TzKT may hit URL length limit with hundreds of originations in a single request.
         # NOTE: Chunk of 100 addresses seems like a reasonable choice - URL of ~3971 characters.
         # NOTE: Other operation requests won't hit that limit.
-        for addresses_chunk in split_by_chunks(list(addresses), TZKT_ORIGINATIONS_REQUEST_LIMIT):
+        for chunk in split_by_chunks(list(addresses or code_hashes), TZKT_ORIGINATIONS_REQUEST_LIMIT):
             raw_originations += await self.request(
                 'get',
                 url='v1/operations/originations',
                 params={
-                    "originatedContract.in": ','.join(addresses_chunk),
+                    f"{field}.in":','.join(map(str, chunk)) if code_hashes else ','.join(chunk),
                     "level.ge": first_level,
                     "level.le": last_level,
                     "select": ','.join(ORIGINATION_OPERATION_FIELDS),
@@ -617,24 +653,36 @@ class TzktDatasource(IndexDatasource):
         self,
         field: str,
         addresses: Set[str],
+        code_hashes: Set[int],
         first_level: int,
         last_level: int,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
     ) -> Tuple[OperationData, ...]:
+        if int(bool(addresses)) + int(bool(code_hashes)) != 1:
+            raise ValueError('Either `addresses` or `code_hashes` must be specified')
+
+        if code_hashes:
+            field += 'CodeHash'
+            field_value = ','.join(map(str, code_hashes))
+        else:
+            field_value = ','.join(addresses)
+
         offset, limit = offset or 0, limit or self.request_limit
+        params = {
+            field: field_value,
+            "offset.cr": offset,
+            "limit": limit,
+            "level.ge": first_level,
+            "level.le": last_level,
+            "select": ','.join(TRANSACTION_OPERATION_FIELDS),
+            "status": "applied",
+        },
+
         raw_transactions = await self.request(
             'get',
             url='v1/operations/transactions',
-            params={
-                f"{field}.in": ','.join(addresses),
-                "offset.cr": offset,
-                "limit": limit,
-                "level.ge": first_level,
-                "level.le": last_level,
-                "select": ','.join(TRANSACTION_OPERATION_FIELDS),
-                "status": "applied",
-            },
+            params=params,
         )
 
         # NOTE: `type` field needs to be set manually when requesting operations by specific type
@@ -644,6 +692,7 @@ class TzktDatasource(IndexDatasource):
         self,
         field: str,
         addresses: Set[str],
+        code_hashes: Set[int],
         first_level: int,
         last_level: int,
     ) -> AsyncIterator[Tuple[OperationData, ...]]:
@@ -651,6 +700,7 @@ class TzktDatasource(IndexDatasource):
             self.get_transactions,
             field,
             addresses,
+            code_hashes,
             first_level,
             last_level,
         ):
