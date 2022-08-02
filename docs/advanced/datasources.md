@@ -28,7 +28,6 @@ TzKT datasource is based on generic HTTP datasource and thus inherits its settin
 datasources:
   tzkt_mainnet:
     http:
-      cache: false
       retry_count:  # retry infinetely
       retry_sleep:
       retry_multiplier:
@@ -121,6 +120,6 @@ assert protocol_json['hash'] == 'PtHangz2aRngywmSRGGvrcTyMbbdpWdpFKuS4uMWxg2RaH9
 
 Datasource HTTP connection parameters (ratelimit, backoff, etc.) are applied on every request.
 
-> 🤓 **SEE ALSO**
+> 💡 **SEE ALSO**
 >
 > * {{ #summary config/datasources.md}}
